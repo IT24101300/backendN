@@ -17,10 +17,20 @@ const itemSchema = new mongoose.Schema(
       required: [true, "Price is required"],
       min: [0, "Price cannot be negative"],
     },
+    discount: {
+      type: Number,
+      required: [true, "Price is required"],
+      min: [0, "discount cannot be negative"],
+      max: [100, "discount cannot be more than 100"],
+    },
     description: {
       type: String,
       required: [true, "Description is required"],
       trim: true,
+    },
+    Date: {
+      type: Date,
+      required: [true, "Date is required"],
     },
     imageUrl: {
       type: String,
