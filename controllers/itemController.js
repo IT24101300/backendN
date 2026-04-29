@@ -1,5 +1,15 @@
 import Item from "../models/Item.js";
 
+const normalizeItemPayload = (body) => ({
+  ...body,
+  ...(body.price !== undefined ? { price: Number(body.price) } : {}),
+  ...(body.discountPercentage !== undefined
+    ? { discountPercentage: Number(body.discountPercentage) }
+    : body.discount !== undefined
+      ? { discountPercentage: Number(body.discount) }
+      : {}),
+});
+
 export const getItems = async (req, res) => {
   try {
     const items = await Item.find().sort({ createdAt: -1 });
@@ -25,7 +35,8 @@ export const getItemById = async (req, res) => {
 
 export const createItem = async (req, res) => {
   try {
-    const newItem = await Item.create(req.body);
+    const payload = normalizeItemPayload(req.body);
+    const newItem = await Item.create(payload);
     res.status(201).json(newItem);
   } catch (error) {
     res.status(400).json({
@@ -37,7 +48,8 @@ export const createItem = async (req, res) => {
 
 export const updateItem = async (req, res) => {
   try {
-    const updatedItem = await Item.findByIdAndUpdate(req.params.id, req.body, {
+    const payload = normalizeItemPayload(req.body);
+    const updatedItem = await Item.findByIdAndUpdate(req.params.id, payload, {
       new: true,
       runValidators: true,
     });
